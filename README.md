@@ -1,4 +1,4 @@
-# 🐧 NixOS Configuration - KDE Plasma 6 Development Setup
+#  NixOS Configuration - KDE Plasma 6 Development Setup
 
 Professional NixOS configuration optimized for full-stack development with KDE Plasma 6, Intel hardware optimizations, and modern development tools.
 
