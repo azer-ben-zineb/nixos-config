@@ -23,7 +23,7 @@
     curl
     expat
 
-    # X11 libraries (needed for Java GUI applications)
+    # X11 libraries (needed for JavaFX and Java GUI applications)
     xorg.libX11
     xorg.libXext
     xorg.libXtst
@@ -32,33 +32,54 @@
     xorg.libXrender
     xorg.libXi
     xorg.libXcomposite
+    xorg.libXxf86vm
 
     # Graphics
     libGL
+    libglvnd
 
-    # Font rendering (important for IDEs)
+    # Font rendering (important for IDEs and JavaFX)
     fontconfig
     freetype
+    harfbuzz
 
-    # GTK libraries
+    # GTK libraries (required by JavaFX)
     gtk3
+    gtk2
+    glib
     cairo
     pango
     atk
     gdk-pixbuf
 
-    # Audio
+    # Audio (required by JavaFX media)
     alsa-lib
+    libpulseaudio
 
-    # Add specific libraries your programs need
+    # Video acceleration
+    libva
+
+    # Additional JavaFX dependencies
+    glibc
+    gcc.cc.lib
   ];
 
-# Boot Configuration with optimizations
+  # Boot Configuration with optimizations
   boot = {
     loader = {
-      systemd-boot.enable = true;
+      systemd-boot = {
+        enable = true;
+        configurationLimit = 5;
+        # Add Windows boot entry
+        extraEntries = {
+          "windows.conf" = ''
+            title Windows 11
+            efi /EFI/Microsoft/Boot/bootmgr.efi
+          '';
+        };
+      };
       efi.canTouchEfiVariables = true;
-      timeout = 3;
+      timeout = 5;  # Give more time to choose between systems
     };
     kernelPackages = pkgs.linuxPackages_latest;
 
@@ -171,7 +192,12 @@
   };
 
   # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config = {
+    allowUnfree = true;
+    permittedInsecurePackages = [
+      "gradle-7.6.6"
+    ];
+  };
 
   # Security
   security = {
@@ -262,6 +288,9 @@
 
   # Programs
   programs = {
+    # Java - system-wide
+    java.enable = true;
+
     # Dconf
     dconf.enable = true;
 
